@@ -2,22 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class Player : MonoBehaviour
 {
+    // components
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Animator anim;
 
-    // animation/movement stuff
+    // animation variables
+    private bool facingRight;
+    private bool animationPlaying = false;
+
+    // movement variables
     [SerializeField] private float walkSpeed = 2.5f;
     [SerializeField] private float runSpeed = 5.0f;
     private float horizontalInput;
-    private bool facingRight;
     private bool actionable = true;     // whether the player can input stuff
-    private bool animationPlaying = false;
 
     // lighter stuff
     private UnityEngine.Rendering.Universal.Light2D lighter;
-    private bool lighterOn;
+    private bool holdingLighter;
 
     void Start()
     {
@@ -45,18 +48,20 @@ public class PlayerMovement : MonoBehaviour
                 rb.velocity = new Vector2(horizontalInput * walkSpeed, rb.velocity.y);
 
             // lighter controls
-            if(Input.GetButton("Lighter"))
-                lighterOn = true;
-            else
-                lighterOn = false;
+            if(Input.GetButton("Lighter") && !Input.GetButton("Sprint"))
+                holdingLighter = true;
+            else {
+                holdingLighter = false;
+                releaseLighter();
+            }
 
             // updates animator variables
             anim.SetFloat("Speed", Mathf.Abs(rb.velocity.x));
-            anim.SetBool("LighterOn", lighterOn);
+            anim.SetBool("HoldingLighter", holdingLighter);
         }
     }
 
-    // My Functions
+    // animation functions
     private void Flip()
     {
         facingRight = !facingRight;
@@ -75,6 +80,16 @@ public class PlayerMovement : MonoBehaviour
     public void unsetAnimationPlaying()
     {
         animationPlaying = false;
+    }
+
+    public void flickLighter()
+    {
+        lighter.enabled = true;
+    }
+
+    public void releaseLighter()
+    {
+        lighter.enabled = false;
     }
 
     public void freezePlayer()
