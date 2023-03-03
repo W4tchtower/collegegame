@@ -8,15 +8,18 @@ public class Player : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Animator anim;
 
+    // player start point
+    public Vector2 playerStartPos = new Vector2(-0.4f, 0.518f);
+
     // animation variables
     private bool facingRight;
-    private bool animationPlaying = false;
+    private bool animationPlaying = false; // this variable is used by the animator
 
     // movement variables
     [SerializeField] private float walkSpeed = 2.5f;
     [SerializeField] private float runSpeed = 5.0f;
     private float horizontalInput;
-    private bool actionable = true;     // whether the player can input stuff
+    public bool disableMovement = false;
 
     // lighter stuff
     private UnityEngine.Rendering.Universal.Light2D lighter;
@@ -29,18 +32,20 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if(actionable && !animationPlaying)
+        if(!animationPlaying)
         {
             horizontalInput = Input.GetAxisRaw("Horizontal");
-
-            if((!facingRight && horizontalInput < 0.0f) || (facingRight && horizontalInput > 0.0f))
-                Flip();
         }
     }
 
     void FixedUpdate()
     {
-        if(actionable){
+        if(!disableMovement)
+        {
+            // which way the character faces
+            if((!facingRight && horizontalInput < 0.0f) || (facingRight && horizontalInput > 0.0f))
+                Flip();
+
             // running & walking
             if(Input.GetButton("Sprint"))
                 rb.velocity = new Vector2(horizontalInput * runSpeed, rb.velocity.y);
@@ -54,11 +59,14 @@ public class Player : MonoBehaviour
                 holdingLighter = false;
                 releaseLighter();
             }
-
-            // updates animator variables
-            anim.SetFloat("Speed", Mathf.Abs(rb.velocity.x));
-            anim.SetBool("HoldingLighter", holdingLighter);
+        } else {
+            horizontalInput = 0.0f;
+            rb.velocity = new Vector2(0, 0);
         }
+
+        // updates animator variables
+        anim.SetFloat("Speed", Mathf.Abs(rb.velocity.x));
+        anim.SetBool("HoldingLighter", holdingLighter);
     }
 
     // animation functions
@@ -90,15 +98,5 @@ public class Player : MonoBehaviour
     public void releaseLighter()
     {
         lighter.enabled = false;
-    }
-
-    public void freezePlayer()
-    {
-        actionable = false;
-    }
-
-    public void releasePlayer()
-    {
-        actionable = true;
     }
 }
