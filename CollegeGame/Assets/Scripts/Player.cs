@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
     // components
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Animator anim;
+    private DialogueManager dialogueManager;
 
     // player start point
     public Vector2 playerStartPos = new Vector2(-0.4f, 0.518f);
@@ -19,7 +20,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float walkSpeed = 2.5f;
     [SerializeField] private float runSpeed = 5.0f;
     private float horizontalInput;
-    public bool disableMovement = false;
+    private bool movementEnabled = true;
 
     // lighter stuff
     private UnityEngine.Rendering.Universal.Light2D lighter;
@@ -27,6 +28,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
+        dialogueManager = GameObject.FindWithTag("UI").GetComponent<DialogueManager>();
         lighter = GetComponentInChildren<UnityEngine.Rendering.Universal.Light2D>();
     }
 
@@ -40,7 +42,7 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(!disableMovement)
+        if(movementEnabled)
         {
             // which way the character faces
             if((!facingRight && horizontalInput < 0.0f) || (facingRight && horizontalInput > 0.0f))
@@ -55,11 +57,14 @@ public class Player : MonoBehaviour
             // lighter controls
             if(Input.GetButton("Lighter") && !Input.GetButton("Sprint"))
                 holdingLighter = true;
-            else {
+            else
+            {
                 holdingLighter = false;
                 releaseLighter();
             }
-        } else {
+        }
+        else
+        {
             horizontalInput = 0.0f;
             rb.velocity = new Vector2(0, 0);
         }
@@ -77,7 +82,6 @@ public class Player : MonoBehaviour
         ls.x *= -1.0f;
         transform.localScale = ls;
     }
-
 
     // Animation events
     public void setAnimationPlaying()
@@ -98,5 +102,17 @@ public class Player : MonoBehaviour
     public void releaseLighter()
     {
         lighter.enabled = false;
+    }
+
+    public bool getLighterActive()
+    {
+        return holdingLighter;
+    }
+
+    // Other
+    public IEnumerator disableMovement(float _time)
+    {
+        movementEnabled = false;
+        yield return new WaitForSeconds(_time);
     }
 }

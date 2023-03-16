@@ -4,10 +4,15 @@ using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
 {
-    public Transform player;
+    private Transform player;
+
+    void Start()
+    {
+        player = GameObject.FindWithTag("Player").transform;
+    }
 
     void Update()
     {
-        transform.position = player.transform.position + new Vector3(0, 0.3f, -10);
+        transform.position = player.transform.position + new Vector3(0, 0, -10);
     }
 }
