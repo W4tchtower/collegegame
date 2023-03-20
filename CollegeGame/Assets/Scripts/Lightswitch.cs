@@ -41,4 +41,9 @@ public class Lightswitch : Interactable
         lightbulb.enabled = false;
         broken = true;
     }
+
+    public void dimLightbulb()
+    {
+        lightbulb.intensity /= 3.5f;
+    }
 }

@@ -5,8 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class Level1 : Level
 {
-    public static int iteration = 1;
-    public const int TOTAL_ITERATIONS = 4;
+    public static int iteration = 0;
+    public const int TOTAL_ITERATIONS = 5;
 
     protected override void Start()
     {
@@ -29,23 +29,33 @@ public class Level1 : Level
                     new Vector2(i * EntryDoor.GetComponent<Renderer>().bounds.size.x, HALL_HEIGHT),
                     Quaternion.identity
                 );
+                entryDoor.GetComponentInChildren<Door>().setLocked(true);
                 halls.Add(entryDoor);
             }
-            else if (i == 2)
+            else if (i == 1)
             {
                 GameObject hall = (GameObject)Instantiate(
                     Hall,
                     new Vector2(i * Hall.GetComponent<Renderer>().bounds.size.x, HALL_HEIGHT),
                     Quaternion.identity
                 );
+                halls.Add(hall);
+
                 GameObject dialogueSpace = (GameObject)Instantiate(
                     DialogueSpace,
                     new Vector2(i * Hall.GetComponent<Renderer>().bounds.size.x, DIALOGUESPACE_HEIGHT),
                     Quaternion.identity
                 );
-                dialogueSpace.GetComponent<DialogueSpace>().setDialogue( getDialogue() );
-                halls.Add(hall);
-                halls.Add(dialogueSpace);
+
+                // Dialogue for the non-first iteration
+                if(iteration == 0)
+                {
+                    dialogueSpace.GetComponent<DialogueSpace>().setDialogue( "(hold \'shift\' to sprint)", Color.grey, 0f );
+                }
+                else
+                {
+                    dialogueSpace.GetComponent<DialogueSpace>().setDialogue( getDialogue() );
+                }
             }
             else if(i < 4)
             {

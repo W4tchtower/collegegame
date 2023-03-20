@@ -8,7 +8,6 @@ public class DialogueSpace : MonoBehaviour
     private string dialogue;
     private Color color;
     private float textSpeed;
-    private const float DEFAULT_TEXTSPEED = 0.05f;
 
     void Start()
     {
@@ -18,18 +17,14 @@ public class DialogueSpace : MonoBehaviour
     public void OnTriggerEnter2D(Collider2D col)
     {
         if(col.CompareTag("Player"))
+        {
             dialogueManager.sendDialogue(dialogue, color, textSpeed);
-            StartCoroutine( disableThis() );
+            Debug.Log("Destroyed");
+            Destroy(this);
+        }
     }
 
-    public IEnumerator disableThis()
-    {
-        yield return new WaitForSeconds(1.2f);
-        Debug.Log("Destroyed!");
-        Destroy(this);
-    }
-
-    public void setDialogue(string p_dialogue, Color? p_color = null, float p_textSpeed = DEFAULT_TEXTSPEED)
+    public void setDialogue(string p_dialogue, Color? p_color = null, float p_textSpeed = DialogueManager.DEFAULT_TEXTSPEED)
     {
         dialogue = p_dialogue;
         color = p_color ?? Color.white;;

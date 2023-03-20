@@ -5,6 +5,9 @@ using TMPro;
 
 public class DialogueManager : MonoBehaviour
 {
+    public const float DEFAULT_TEXTSPEED = 0.03f;
+    public const float DEFAULT_TEXTLINGERTIME = 1.5f;
+
     private TextMeshProUGUI textMesh;
 
     void Start()
@@ -17,6 +20,7 @@ public class DialogueManager : MonoBehaviour
     {
         StopAllCoroutines();
         clear();
+        Debug.Log("Printing: \"" + p_dialogue + "\"");
         StartCoroutine( typeDialogue(p_dialogue, p_color, p_textSpeed) );
     }
 
@@ -38,7 +42,7 @@ public class DialogueManager : MonoBehaviour
             }
             yield return new WaitForSeconds(1.0f);
         }
-        StartCoroutine( fade(1.0f) );
+        StartCoroutine( fade(DEFAULT_TEXTLINGERTIME) );
     }
 
     public void clear()
