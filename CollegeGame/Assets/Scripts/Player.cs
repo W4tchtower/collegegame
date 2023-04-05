@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
     // components
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Animator anim;
-    private DialogueManager dialogueManager;
+    [SerializeField] private AudioSource footstepSound;
 
     // player start point
     public Vector2 playerStartPos = new Vector2(-0.4f, 0.518f);
@@ -28,7 +28,6 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        dialogueManager = GameObject.FindWithTag("UI").GetComponent<DialogueManager>();
         lighter = GetComponentInChildren<UnityEngine.Rendering.Universal.Light2D>();
     }
 
@@ -107,6 +106,11 @@ public class Player : MonoBehaviour
     public bool getLighterActive()
     {
         return holdingLighter;
+    }
+
+    public void playFootstepSound()
+    {
+        footstepSound.Play();
     }
 
     // Other

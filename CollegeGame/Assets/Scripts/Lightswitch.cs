@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class Lightswitch : Interactable
 {
+    [SerializeField] private AudioSource flickSound;
+    [SerializeField] private AudioSource breakBulbSound;
+
     private Light2D lightbulb;
     private bool broken;
 
@@ -15,29 +18,29 @@ public class Lightswitch : Interactable
 
     public override void interact()
     {
-        if(!broken)
+        if(lightbulb.enabled || GameObject.FindWithTag("Player").GetComponent<Player>().getLighterActive())
         {
-            if(lightbulb.enabled)
+            flickSound.Play();
+            Debug.Log("Flick sound played");
+
+            if(!broken)
             {
-                lightbulb.enabled = false;
-            }
-            else
-            {
-                if(GameObject.FindWithTag("Player").GetComponent<Player>().getLighterActive())
-                {
-                    lightbulb.enabled = true;
-                }
+                lightbulb.enabled = !lightbulb.enabled;
             }
         }
     }
 
     public void turnOffLightbulb()
     {
+        flickSound.Play();
         lightbulb.enabled = false;
     }
 
-    public void breakLightbulb()
+    public IEnumerator breakLightbulb()
     {
+        lightbulb.intensity *= 5;
+        breakBulbSound.Play();
+        yield return new WaitForSeconds(0.05f);
         lightbulb.enabled = false;
         broken = true;
     }

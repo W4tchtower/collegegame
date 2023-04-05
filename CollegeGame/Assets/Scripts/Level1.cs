@@ -6,11 +6,13 @@ using UnityEngine.SceneManagement;
 public class Level1 : Level
 {
     public static int iteration = 0;
-    public const int TOTAL_ITERATIONS = 5;
+    public const int TOTAL_ITERATIONS = 4;
 
     protected override void Start()
     {
         base.Start();
+
+        iteration++;
     }
 
     protected override void generateHallway()
@@ -20,13 +22,13 @@ public class Level1 : Level
             if(i == 0)
             {
                 GameObject wall = (GameObject)Instantiate(
-                    Wall,
+                    pf_Wall,
                     new Vector2(i, WALL_HEIGHT),
                     Quaternion.identity
                 );
                 GameObject entryDoor = (GameObject)Instantiate(
-                    EntryDoor,
-                    new Vector2(i * EntryDoor.GetComponent<Renderer>().bounds.size.x, HALL_HEIGHT),
+                    pf_EntryDoor,
+                    new Vector2(i * pf_EntryDoor.GetComponent<Renderer>().bounds.size.x, HALL_HEIGHT),
                     Quaternion.identity
                 );
                 entryDoor.GetComponentInChildren<Door>().setLocked(true);
@@ -35,33 +37,17 @@ public class Level1 : Level
             else if (i == 1)
             {
                 GameObject hall = (GameObject)Instantiate(
-                    Hall,
-                    new Vector2(i * Hall.GetComponent<Renderer>().bounds.size.x, HALL_HEIGHT),
+                    pf_Hall,
+                    new Vector2(i * pf_Hall.GetComponent<Renderer>().bounds.size.x, HALL_HEIGHT),
                     Quaternion.identity
                 );
                 halls.Add(hall);
-
-                GameObject dialogueSpace = (GameObject)Instantiate(
-                    DialogueSpace,
-                    new Vector2(i * Hall.GetComponent<Renderer>().bounds.size.x, DIALOGUESPACE_HEIGHT),
-                    Quaternion.identity
-                );
-
-                // Dialogue for the non-first iteration
-                if(iteration == 0)
-                {
-                    dialogueSpace.GetComponent<DialogueSpace>().setDialogue( "(hold \'shift\' to sprint)", Color.grey, 0f );
-                }
-                else
-                {
-                    dialogueSpace.GetComponent<DialogueSpace>().setDialogue( getDialogue() );
-                }
             }
             else if(i < 4)
             {
                 GameObject hall = (GameObject)Instantiate(
-                    Hall,
-                    new Vector2(i * Hall.GetComponent<Renderer>().bounds.size.x, HALL_HEIGHT),
+                    pf_Hall,
+                    new Vector2(i * pf_Hall.GetComponent<Renderer>().bounds.size.x, HALL_HEIGHT),
                     Quaternion.identity
                 );
                 halls.Add(hall);
@@ -69,15 +55,15 @@ public class Level1 : Level
             else
             {
                 GameObject exitDoor = (GameObject)Instantiate(
-                    ExitDoor,
-                    new Vector2(i * ExitDoor.GetComponent<Renderer>().bounds.size.x, HALL_HEIGHT),
+                    pf_ExitDoor,
+                    new Vector2(i * pf_ExitDoor.GetComponent<Renderer>().bounds.size.x, HALL_HEIGHT),
                     Quaternion.identity
                 );
                 exitDoor.transform.Find("Door").GetComponent<Door>().setLocked(false);
 
                 GameObject wall = (GameObject)Instantiate(
-                    Wall,
-                    new Vector2((i + 1) * ExitDoor.GetComponent<Renderer>().bounds.size.x, WALL_HEIGHT),
+                    pf_Wall,
+                    new Vector2((i + 1) * pf_ExitDoor.GetComponent<Renderer>().bounds.size.x, WALL_HEIGHT),
                     Quaternion.identity
                 );
                 halls.Add(exitDoor);
@@ -85,22 +71,15 @@ public class Level1 : Level
         }
     }
 
-    string getDialogue()
+    protected override void runHallEvent()
     {
-        switch(iteration)
-        {
-            case 1:
-                return "I'm alone here. In my dream omniscience, I know that there's nothing here but myself and thousands of miles of steel halls around me.";
-            case 2:
-                return "I've been dreaming now for what could be hours or years. Something about the way I can feel the world shifting uncomfortably around me, struggling to settle.";
-            case 3:
-                return "Something about how the floor seems to sink beneath my feet, like I'm stepping over dusty, dead piano keys.";
-            case 4:
-                return "I don't get hungry or thirsty here. I don't get tired here either. Nothing to distract me from roaming these endless halls.";
-            case 5:
-                return "It's only me here. I can feel my brain twisting through these halls, stirring up dust, watching me run in circles. I've never felt more alone.";
-            default:
-                return string.Empty;
-        }
+        return;
     }
 }
+
+/*
+As the player walks into the new hall, it should say stuff like:
+
+"A metal hallway sprawls out before you. \nYou feel alone."
+and then "alone" turns into "like something's watching you" etc.
+*/

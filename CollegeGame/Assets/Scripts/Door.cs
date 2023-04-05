@@ -4,29 +4,30 @@ using UnityEngine;
 
 public class Door : Interactable
 {
-    protected GameObject otherDoor;
-    protected WorldManager worldManager;        // darkness transitions
+    [SerializeField] AudioSource doorOpenSound;
+    [SerializeField] AudioSource doorLockSound;
+
     protected GameObject player;
-    private const float PLAYER_DOOR_DISTANCE = 0.02f; // the distance between the player and the ground if spawned at a door's coordinates.
+
     private bool locked;
     private bool doorTransporting = false; // makes it so that player can't retransport whilst transporting by rapid-fire hitting space
 
     void Start()
     {
-        if(gameObject.tag == "ExitDoor")
-        {
-            otherDoor = GameObject.FindWithTag("EntryDoor");
-        }
-
-        worldManager = GameObject.FindWithTag("UI").GetComponent<WorldManager>();
         player = GameObject.FindWithTag("Player");
     }
 
     public override void interact()
     {
-        if(!doorTransporting && !locked)
+        if(!doorTransporting)
         {
-            doorTransport();
+            if(!locked)
+            {
+                doorOpenSound.Play();
+            } else {
+                doorLockSound.Play();
+            }
+
         }
     }
 
@@ -34,7 +35,12 @@ public class Door : Interactable
     {
         doorTransporting = true;
         StartCoroutine(player.GetComponent<Player>().disableMovement(0.5f));
-        StartCoroutine(worldManager.nextLevel());
+    }
+
+    void doorReset()
+    {
+        doorTransporting = true;
+        StartCoroutine(player.GetComponent<Player>().disableMovement(0.5f));
     }
 
     public void setLocked(bool p_locked)
